@@ -11,7 +11,7 @@ It is a readline extension, with inherent command completion, persistent history
 int com_ls();
 
 int main() {
-  kerl_register("ls", com_ls, "List directory contents.");
+  kerl_register("ls", com_ls, "List files in current folder.");
   kerl_run("$ "); // l<tab> should give "ls " and argument tabulation should give files/folders
 }
 

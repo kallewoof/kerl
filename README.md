@@ -47,3 +47,54 @@ kerl_register_help("help");
 // help Show help information.
 // $ 
 ```
+
+### Custom per-command completion handler
+
+```C
+int com_greet();
+char *compl_greet();
+
+int main() {
+	kerl_register("greet", com_greet, "Greet Henry, Fred, George, or whoever.");
+	kerl_set_completor("greet", compl_greet);
+	kerl_run("GreetShell> ");
+}
+
+int com_greet(const char *arg) {
+	printf("\"Greetings, %s!\" you exclaim.\n", arg);
+	return 0;
+}
+
+char *compl_greet(const char *text, int state)
+{
+	static int list_index, len;
+	const char *name;
+
+	/* If this is a new word to complete, initialize now.  This includes
+	 saving the length of TEXT for efficiency, and initializing the index
+	 variable to 0. */
+	if (!state) {
+		list_index = -1;
+		len = strlen(text);
+	}
+
+	/* Return the next name which partially matches from the command list. */
+	while (++list_index < 3) {
+		name = names[list_index];
+
+		if (strncasecmp(name, text, len) == 0)
+			return strdup(name);
+	}
+
+	/* If no names matched, then return NULL. */
+	return (char *)NULL;
+}
+
+// GreetShell> gr<tab>
+// GreetShell> greet <tab>
+// Hemingway Henrietta Henry
+// GreetShell> greet He<tab>
+// GreetShell> greet Hem<tab>
+// GreetShell> greet Hemingway 
+// "Greetings, Hemingway!" you exclaim.
+```

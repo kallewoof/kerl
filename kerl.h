@@ -10,8 +10,10 @@
 #include <readline/history.h>
 
 typedef int (*kerl_bindable) (const char *arg);
+typedef char *(*kerl_completor)(const char *text, int continued);
 
 void kerl_register(char *name, kerl_bindable func, char *doc);
 void kerl_register_help(char *name);
+void kerl_set_completor(char *name, kerl_completor completor);
 void kerl_run(const char *prompt);
 void kerl_set_history_file(const char *path);

@@ -10,6 +10,7 @@
 #include <sys/errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -21,6 +22,7 @@
 #endif
 
 int kerl_com_help();
+char *command_generator ();
 
 /* A structure which contains information on the commands this program
    can understand. */
@@ -29,6 +31,7 @@ typedef struct {
   char *name;			     /* User printable name of the function. */
   kerl_bindable func;  /* Function to call to do the job. */
   char *doc;			     /* Documentation for this function.  */
+  kerl_completor compl;/* Completion engine, or NULL if none. */
 } COMMAND;
 
 int command_count = 0;
@@ -52,12 +55,20 @@ void kerl_register(char *name, kerl_bindable func, char *doc)
     command_cap *= 2;
     commands = realloc(commands, sizeof(COMMAND) * command_cap);
   }
-  commands[command_count++] = (COMMAND) {name, func, doc};
+  commands[command_count++] = (COMMAND) {name, func, doc, NULL};
+}
+
+void kerl_set_completor(char *name, kerl_completor completor)
+{
+  COMMAND *cmd = find_command(name);
+  assert(cmd);
+  cmd->compl = completor;
 }
 
 void kerl_register_help(char *name)
 {
   kerl_register(name, kerl_com_help, "Show help information.");
+  kerl_set_completor(name, command_generator);
 }
 
 /* When non-zero, this global means the user is done using this program. */
@@ -172,6 +183,14 @@ COMMAND *find_command(char *name)
   return (COMMAND *)NULL;
 }
 
+char *strdup_command(char *line)
+{
+  register int i, x;
+  x = strlen(line);
+  for (i = 0; i < x && line[i] != ' '; i++);
+  return strndup(line, i);
+}
+
 /* Strip whitespace from the start and end of STRING.  Return a pointer
    into STRING. */
 char *stripwhite(char *string)
@@ -224,7 +243,6 @@ int kerl_com_help(const char *arg)
 /*                                                                  */
 /* **************************************************************** */
 
-char *command_generator ();
 char **kerl_completion ();
 
 /* Tell the GNU Readline library how to complete.  We want to try to complete
@@ -250,10 +268,23 @@ char **kerl_completion(char *text, int start, int end)
   matches = (char **)NULL;
 
   /* If this word is at the start of the line, then it is a command
-     to complete.  Otherwise it is the name of a file in the current
-     directory. */
+     to complete. */
   if (start == 0) {
     matches = rl_completion_matches(text, command_generator);
+  } else {
+    /* If we have a custom completor, we use that. Otherwise it is the name 
+       of a file in the current directory. */
+    int spaces = 0;
+    for (register int i = 0; spaces < 2 && rl_line_buffer[i]; i++) spaces += rl_line_buffer[i] == ' ';
+    if (spaces < 2) {
+      char *strcom = strdup_command(rl_line_buffer);
+      int clen = strlen(strcom);
+      COMMAND *com = find_command(strcom);
+      free(strcom);
+      if (com && com->compl) {
+        matches = rl_completion_matches(text, com->compl);
+      }
+    }
   }
 
   return matches;
@@ -262,7 +293,7 @@ char **kerl_completion(char *text, int start, int end)
 /* Generator function for command completion.  STATE lets us know whether
    to start from scratch; without any state (i.e. STATE == 0), then we
    start at the top of the list. */
-char *command_generator (char *text, int state)
+char *command_generator (const char *text, int state)
 {
   static int list_index, len;
   char *name;

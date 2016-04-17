@@ -20,6 +20,8 @@
 #define whitespace(c) (((c) == ' ') || ((c) == '\t'))
 #endif
 
+int kerl_com_help();
+
 /* A structure which contains information on the commands this program
    can understand. */
 
@@ -51,6 +53,11 @@ void kerl_register(char *name, kerl_bindable func, char *doc)
     commands = realloc(commands, sizeof(COMMAND) * command_cap);
   }
   commands[command_count++] = (COMMAND) {name, func, doc};
+}
+
+void kerl_register_help(char *name)
+{
+  kerl_register(name, kerl_com_help, "Show help information.");
 }
 
 /* When non-zero, this global means the user is done using this program. */
@@ -182,6 +189,33 @@ char *stripwhite(char *string)
   *++t = '\0';
 
   return s;
+}
+
+int kerl_com_help(const char *arg)
+{
+  register int i;
+  int arglen = arg ? strlen(arg) : 0;
+
+  int max_clen = 0, clen;
+  for (i = 0; i < command_count; i++) {
+    if (!arglen || !strncmp(commands[i].name, arg, arglen)) {
+      clen = strlen(commands[i].name);
+      if (clen > max_clen) max_clen = clen;
+    }
+  }
+  int found = 0;
+  char fmt[16];
+  sprintf(fmt, "%%-%ds %%s\n", max_clen);
+  for (i = 0; i < command_count; i++) {
+    if (!arglen || !strncmp(commands[i].name, arg, arglen)) {
+      printf(fmt, commands[i].name, commands[i].doc);
+      found++;
+    }
+  }
+  if (found == 0) {
+    fprintf(stderr, "%s: no command with this prefix\n", arg);
+  }
+  return found > 0;
 }
 
 /* **************************************************************** */

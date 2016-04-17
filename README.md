@@ -37,6 +37,13 @@ kerl_run("$ ");
 
 The `kerl_set_history_file` command will load and save user input to the given file, so that a user will be able to use the up-arrow / ^R features to find input from previous instances.
 
-## Todo
+### Help command
 
-Currently 3rd argument to kerl_register (the description) does nothing.
+```C
+kerl_register_help("help");
+// $ help
+// ls   List files in current folder.
+// echo Echo the given argument string.
+// help Show help information.
+// $ 
+```

@@ -1,5 +1,7 @@
 # kerl
-Readline extension for command line tools in C, with command completion, persistent history support, and so on.
+Kerl lets you set up a command line tool in C in a few lines of code, where adding commands takes one line.
+
+It is a readline extension, with inherent command completion, persistent history support, and so on.
 
 ## Example
 

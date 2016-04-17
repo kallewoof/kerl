@@ -13,7 +13,7 @@ int main() {
   kerl_run("$ "); // l<tab> should give "ls " and argument tabulation should give files/folders
 }
 
-int com_ls(char *a rg) {
+int com_ls(const char *arg) {
   char buf[1024]; 
   if (!arg) arg = "";
 

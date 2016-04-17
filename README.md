@@ -25,6 +25,8 @@ int com_ls(const char *arg) {
 }
 ```
 
+Typing `l` and hitting the tab key should complete `ls ` and argument completion finds files, just like a normal shell. Multiple commands with a shared prefix will be completed as they are in bash et al.
+
 ### Persistent history across sessions
 
 ```C
@@ -32,6 +34,8 @@ kerl_set_history_file(".my-history-file");
 // ...
 kerl_run("$ ");
 ```
+
+The `kerl_set_history_file` command will load and save user input to the given file, so that a user will be able to use the up-arrow / ^R features to find input from previous instances.
 
 ## Todo
 

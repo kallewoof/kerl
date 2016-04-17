@@ -78,7 +78,7 @@ char *compl_greet(const char *text, int state)
 		len = strlen(text);
 	}
 
-	/* Return the next name which partially matches from the command list. */
+	/* Return the next name which partially matches from the names list. */
 	while (++list_index < 3) {
 		name = names[list_index];
 

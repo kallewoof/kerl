@@ -29,3 +29,7 @@ kerl_set_history_file(".my-history-file");
 // ...
 kerl_run("$ ");
 ```
+
+## Todo
+
+Currently 3rd argument to kerl_register (the description) does nothing.

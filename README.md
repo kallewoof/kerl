@@ -15,12 +15,13 @@ int main() {
   kerl_run("$ "); // l<tab> should give "ls " and argument tabulation should give files/folders
 }
 
+static char syscom[1024]; 
+
 int com_ls(const char *arg) {
-  char buf[1024]; 
   if (!arg) arg = "";
 
-  sprintf(buf, "ls -FClg %s", arg);
-  return system(buf);
+  sprintf(syscom, "ls -FClg %s", arg);
+  return system(syscom);
 }
 ```
 

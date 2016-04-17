@@ -94,6 +94,7 @@ char *compl_greet(const char *text, int state)
 // GreetShell> greet <tab>
 // Hemingway Henrietta Henry
 // GreetShell> greet He<tab>
+// Hemingway Henrietta Henry
 // GreetShell> greet Hem<tab>
 // GreetShell> greet Hemingway 
 // "Greetings, Hemingway!" you exclaim.

@@ -237,7 +237,7 @@ int kerl_com_help(const char *arg)
   return found > 0;
 }
 
-void kerl_make_argcv(const char *argstring, size_t *argcOut, char ***argvOut)
+int kerl_make_argcv(const char *argstring, size_t *argcOut, char ***argvOut)
 {
   register int i, j;
   size_t argc = 0, cap = 2;
@@ -274,7 +274,7 @@ void kerl_make_argcv(const char *argstring, size_t *argcOut, char ***argvOut)
     if (quot || esc) {
       if (quot) buf[j++] = '\n';
       line = readline(quot == '"' ? "dquote> " : quot == '\'' ? "quote> " : "> ");
-      if (!line) { *argcOut = 0; *argvOut = NULL; return; }
+      if (!line) { *argcOut = 0; *argvOut = NULL; return -1; }
       argstring = line; // preserve whitespace as we are quoting
     } else break;
   }
@@ -291,6 +291,8 @@ void kerl_make_argcv(const char *argstring, size_t *argcOut, char ***argvOut)
 
   *argcOut = argc;
   *argvOut = argv;
+
+  return 0;
 }
 
 void kerl_free_argcv(size_t argc, char **argv)

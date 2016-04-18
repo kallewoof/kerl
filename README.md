@@ -140,7 +140,7 @@ int com_greet(const char *arg) {
 
 static const char *names[] = {"Henry", "Henrietta", "Hemingway"};
 
-char *compl_greet(const char *text, int state)
+char *compl_greet(const char *text, int continued)
 {
 	static int list_index, len;
 	const char *name;
@@ -148,7 +148,7 @@ char *compl_greet(const char *text, int state)
 	/* If this is a new word to complete, initialize now.  This includes
 	 saving the length of TEXT for efficiency, and initializing the index
 	 variable to 0. */
-	if (!state) {
+	if (!continued) {
 		list_index = -1;
 		len = strlen(text);
 	}
@@ -174,3 +174,7 @@ char *compl_greet(const char *text, int state)
 // GreetShell> greet Hemingway 
 // "Greetings, Hemingway!" you exclaim.
 ```
+
+The completion handler has as its sole task to return the next possible value based on the given prefix for the given string. It is called repeatedly until it runs out of options. (Internally, this is done directly by the readline library.)
+
+Completion handlers only deal with the first argument to the given command. Subsequent commands are passed to the default, i.e. the file picker.

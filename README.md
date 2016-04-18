@@ -33,7 +33,6 @@ Typing `l` and hitting the tab key should complete `ls ` and argument completion
 int com_argcv(const char *arg) {
   size_t argc;
   char **argv;
-  kerl_make_argcv(arg, &argc, &argv);
   if (kerl_make_argcv(arg, &argc, &argv)) {
     // user aborted
     printf("user abort\n");

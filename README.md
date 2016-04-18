@@ -74,7 +74,7 @@ argc = 3: [0] foo [1] bar [2] quoted ' and " work too
 foo$ argcv "as does \\ i.e. escaped escape"
 argc = 1: [0] as does \ i.e. escaped escape
 foo$ argcv "starting a quoted thing
-dquote> but deciding to abort by htting ^D
+dquote> but deciding to abort by htting Ctrl-D
 dquote> ^D
 user abort
 ```

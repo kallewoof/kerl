@@ -3,7 +3,13 @@ Kerl lets you set up a command line tool in C in a few lines of code, where addi
 
 It is a readline extension, with inherent command completion, persistent history support, and so on.
 
-## Example
+## Examples
+
+   * Registering a command
+   * Using persistent history file
+   * Enabling the built-in help command
+   * Custom per-command completion handler
+   * Argument handling (multi-line, escapes, quotes, etc.)
 
 ### `ls`
 

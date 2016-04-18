@@ -27,6 +27,59 @@ int com_ls(const char *arg) {
 
 Typing `l` and hitting the tab key should complete `ls ` and argument completion finds files, just like a normal shell. Multiple commands with a shared prefix will be completed as they are in bash et al.
 
+### Argument handling
+
+```C
+int com_argcv(const char *arg) {
+  size_t argc;
+  char **argv;
+  kerl_make_argcv(arg, &argc, &argv);
+  if (kerl_make_argcv(arg, &argc, &argv)) {
+    // user aborted
+    printf("user abort\n");
+    return -1;
+  }
+  printf("argc = %lu:", argc);
+  for (size_t i = 0; i < argc; i++) printf(" [%lu] %s", i, argv[i]);
+  if (argc > 0) printf("\n");
+  kerl_free_argcv(argc, argv);
+  return 0;
+}
+```
+
+The above will convert the arg string into a proper argc/argv size/char array pair. It will handle quotes and escaping, and even prompt for more input upon imbalanced quotes (if the user hits `^C` here, -1 is returned, hence the user abort check).
+
+```Bash
+foo$ argcv foo
+argc = 1: [0] foo
+foo$ argcv foo bar
+argc = 2: [0] foo [1] bar
+foo$ argcv foo\ bar
+argc = 1: [0] foo bar
+foo$ argcv foo" "bar
+argc = 1: [0] foo bar
+foo$ argcv 'foo" "bar'
+argc = 1: [0] foo" "bar
+foo$ argcv foo" bar
+dquote> zed"
+argc = 1: [0] foo bar
+zed
+foo$ argcv foo bar \
+> xyz
+argc = 3: [0] foo [1] bar [2] xyz
+foo$ argcv foo bar\
+> zed
+argc = 2: [0] foo [1] barzed
+foo$ argcv foo bar "quoted ' and \" work too"
+argc = 3: [0] foo [1] bar [2] quoted ' and " work too
+foo$ argcv "as does \\ i.e. escaped escape"
+argc = 1: [0] as does \ i.e. escaped escape
+foo$ argcv "starting a quoted thing
+dquote> but deciding to abort by htting ^D
+dquote> ^D
+user abort
+```
+
 ### Persistent history across sessions
 
 ```C

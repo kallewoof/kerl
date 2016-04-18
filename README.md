@@ -46,7 +46,7 @@ int com_argcv(const char *arg) {
 }
 ```
 
-The above will convert the arg string into a proper argc/argv size/char array pair. It will handle quotes and escaping, and even prompt for more input upon imbalanced quotes (if the user hits `^C` here, -1 is returned, hence the user abort check).
+The above will convert the arg string into a proper argc/argv size/char array pair. It will handle quotes and escaping, and even prompt for more input upon imbalanced quotes (if the user hits `^D` here, -1 is returned, hence the user abort check).
 
 ```Bash
 foo$ argcv foo

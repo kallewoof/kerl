@@ -128,7 +128,7 @@ int com_greet();
 char *compl_greet();
 
 int main() {
-	kerl_register("greet", com_greet, "Greet Henry, Fred, George, or whoever.");
+	kerl_register("greet", com_greet, "Greet Henry, Henrietta, Hemingway, or whoever.");
 	kerl_set_completor("greet", compl_greet);
 	kerl_run("GreetShell> ");
 }
@@ -137,6 +137,8 @@ int com_greet(const char *arg) {
 	printf("\"Greetings, %s!\" you exclaim.\n", arg);
 	return 0;
 }
+
+static const char *names[] = {"Henry", "Henrietta", "Hemingway"};
 
 char *compl_greet(const char *text, int state)
 {

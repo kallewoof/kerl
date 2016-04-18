@@ -28,9 +28,9 @@ char *command_generator ();
    can understand. */
 
 typedef struct {
-  char *name;			     /* User printable name of the function. */
+  char *name;          /* User printable name of the function. */
   kerl_bindable func;  /* Function to call to do the job. */
-  char *doc;			     /* Documentation for this function.  */
+  char *doc;           /* Documentation for this function.  */
   kerl_completor compl;/* Completion engine, or NULL if none. */
 } COMMAND;
 
@@ -87,7 +87,7 @@ void kerl_run(const char *prompt)
 {
   char *line, *s;
 
-  initialize_readline ();	/* Bind our completer. */
+  initialize_readline (); /* Bind our completer. */
 
   /* Loop reading and executing lines until the user quits. */
   for ( ; done == 0; ) {
@@ -235,6 +235,69 @@ int kerl_com_help(const char *arg)
     fprintf(stderr, "%s: no command with this prefix\n", arg);
   }
   return found > 0;
+}
+
+void kerl_make_argcv(const char *argstring, size_t *argcOut, char ***argvOut)
+{
+  register int i, j;
+  size_t argc = 0, cap = 2;
+  char **argv = malloc(sizeof(char*) * cap);
+  char *line, ch, *buf, quot = 0, esc = 0;
+  line = NULL;
+  j = 0;
+  size_t bufcap = 1024;
+  buf = malloc(bufcap);
+  while (1) {
+    if (bufcap == j) { bufcap *= 2; buf = realloc(buf, bufcap); }
+    for (i = 0; argstring[i]; i++) {
+      ch = argstring[i];
+      if (esc) { buf[j++] = ch; esc = 0; continue; }
+      if (ch == '\\') esc = 1;
+      else if (quot) {
+        if (ch == quot) quot = 0;
+        else buf[j++] = ch;
+      }
+      else if (ch == '\'' || ch == '"') quot = ch;
+      else if (ch == ' ') {
+        if (j > 0) {
+          if (argc == cap) {
+            cap *= 2;
+            argv = realloc(argv, sizeof(char*) * cap);
+          }
+          buf[j] = 0;
+          argv[argc++] = strdup(buf);
+          j = 0;
+        }
+      } else buf[j++] = ch;
+    }
+    if (line) free(line);
+    if (quot || esc) {
+      if (quot) buf[j++] = '\n';
+      line = readline(quot == '"' ? "dquote> " : quot == '\'' ? "quote> " : "> ");
+      if (!line) { *argcOut = 0; *argvOut = NULL; return; }
+      argstring = line; // preserve whitespace as we are quoting
+    } else break;
+  }
+
+  if (j > 0) {
+    if (argc == cap) {
+      cap++;
+      argv = realloc(argv, sizeof(char*) * cap);
+    }
+    buf[j] = 0;
+    argv[argc++] = strdup(buf);
+  }
+  free(buf);
+
+  *argcOut = argc;
+  *argvOut = argv;
+}
+
+void kerl_free_argcv(size_t argc, char **argv)
+{
+  register size_t i;
+  for (i = 0; i < argc; i++) free(argv[i]);
+  free(argv);
 }
 
 /* **************************************************************** */

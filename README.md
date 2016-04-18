@@ -11,7 +11,7 @@ It is a readline extension, with inherent command completion, persistent history
    * Custom per-command completion handler
    * Argument handling (multi-line, escapes, quotes, etc.)
 
-### `ls`
+### Registering a command
 
 ```C
 int com_ls();

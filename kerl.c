@@ -274,7 +274,7 @@ int kerl_make_argcv(const char *argstring, size_t *argcOut, char ***argvOut)
     if (quot || esc) {
       if (quot) buf[j++] = '\n';
       line = readline(quot == '"' ? "dquote> " : quot == '\'' ? "quote> " : "> ");
-      if (!line) { *argcOut = 0; *argvOut = NULL; return -1; }
+      if (!line) { printf("\n"); *argcOut = 0; *argvOut = NULL; return -1; }
       argstring = line; // preserve whitespace as we are quoting
     } else break;
   }

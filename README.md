@@ -79,6 +79,27 @@ dquote> ^D
 user abort
 ```
 
+It is also possible to escape e.g. apostrophe or quotation mark using `kerl_make_argcv_escape`. 
+
+   * `argcv this\'\"it` -> `this'"it`
+   * `argcv' this\'\"it` -> `this\'"it`
+   * `argcv" this\'\"it` -> `this'\"it`
+
+which makes it convenient when passing the results to some system function, e.g. 
+```C
+  size_t argc;
+  char **argv;
+  if (kerl_make_argcv_escape(arg, &argc, &argv, "'")) return;
+  if (argc != 2) {
+    fprintf(stderr, "2 args required!\n");
+  } else {
+    char buf[1024];
+    sprintf(buf, "myprog '%s' '%s'", argv[0], argv[1]);
+    system(buf);
+  }
+  kerl_free_argcv(argc, argv);
+```
+
 ### Persistent history across sessions
 
 ```C

@@ -239,6 +239,11 @@ int kerl_com_help(const char *arg)
 
 int kerl_make_argcv(const char *argstring, size_t *argcOut, char ***argvOut)
 {
+  return kerl_make_argcv_escaped(argstring, argcOut, argvOut, 0);
+}
+
+int kerl_make_argcv_escaped(const char *argstring, size_t *argcOut, char ***argvOut, char escape)
+{
   register int i, j;
   size_t argc = 0, cap = 2;
   char **argv = malloc(sizeof(char*) * cap);
@@ -247,15 +252,19 @@ int kerl_make_argcv(const char *argstring, size_t *argcOut, char ***argvOut)
   j = 0;
   size_t bufcap = 1024;
   buf = malloc(bufcap);
+#define bufiter() { \
+  if (ch == escape) buf[j++] = '\\'; \
+  buf[j++] = ch; \
+}
   while (1) {
-    if (bufcap == j) { bufcap *= 2; buf = realloc(buf, bufcap); }
+    if (bufcap >= j - 2) { bufcap *= 2; buf = realloc(buf, bufcap); }
     for (i = 0; argstring[i]; i++) {
       ch = argstring[i];
-      if (esc) { buf[j++] = ch; esc = 0; continue; }
+      if (esc) { bufiter(); esc = 0; continue; }
       if (ch == '\\') esc = 1;
       else if (quot) {
         if (ch == quot) quot = 0;
-        else buf[j++] = ch;
+        else bufiter(); //buf[j++] = ch;
       }
       else if (ch == '\'' || ch == '"') quot = ch;
       else if (ch == ' ') {
@@ -268,7 +277,7 @@ int kerl_make_argcv(const char *argstring, size_t *argcOut, char ***argvOut)
           argv[argc++] = strdup(buf);
           j = 0;
         }
-      } else buf[j++] = ch;
+      } else bufiter();
     }
     if (line) free(line);
     if (quot || esc) {

@@ -18,4 +18,5 @@ void kerl_set_completor(char *name, kerl_completor completor);
 void kerl_run(const char *prompt);
 void kerl_set_history_file(const char *path);
 int kerl_make_argcv(const char *argstring, size_t *argcOut, char ***argvOut);
+int kerl_make_argcv_escaped(const char *argstring, size_t *argcOut, char ***argvOut, char escape);
 void kerl_free_argcv(size_t argc, char **argv);

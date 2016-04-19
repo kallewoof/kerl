@@ -239,10 +239,10 @@ int kerl_com_help(const char *arg)
 
 int kerl_make_argcv(const char *argstring, size_t *argcOut, char ***argvOut)
 {
-  return kerl_make_argcv_escaped(argstring, argcOut, argvOut, 0);
+  return kerl_make_argcv_escape(argstring, argcOut, argvOut, 0);
 }
 
-int kerl_make_argcv_escaped(const char *argstring, size_t *argcOut, char ***argvOut, char escape)
+int kerl_make_argcv_escape(const char *argstring, size_t *argcOut, char ***argvOut, char escape)
 {
   register int i, j;
   size_t argc = 0, cap = 2;

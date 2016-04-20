@@ -174,7 +174,7 @@ which makes it convenient when passing the results to some system function, e.g.
 ```C
   size_t argc;
   char **argv;
-  if (kerl_make_argcv_escape(arg, &argc, &argv, "'")) return;
+  if (kerl_make_argcv_escape(arg, &argc, &argv, '\'')) return;
   if (argc != 2) {
     fprintf(stderr, "2 args required!\n");
   } else {

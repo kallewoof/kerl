@@ -1,5 +1,5 @@
 # kerl
-Kerl lets you set up a command line tool in C in a few lines of code, where adding commands takes one line.
+Kerl lets you create a custom shell in C in a few lines of code, where adding commands takes one line.
 
 It is a readline extension, with inherent command completion, persistent history support, and so on.
 

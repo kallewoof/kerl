@@ -154,8 +154,8 @@ argc = 3: [0] foo [1] bar [2] xyz
 foo$ argcv foo bar\
 > zed
 argc = 2: [0] foo [1] barzed
-foo$ argcv foo bar "quoted ' and \" work too"
-argc = 3: [0] foo [1] bar [2] quoted ' and " work too
+foo$ argcv foo bar "quoted 'apos' and \"quote\" work too"
+argc = 3: [0] foo [1] bar [2] quoted 'apos' and "quote" work too
 foo$ argcv "as does \\ i.e. escaped escape"
 argc = 1: [0] as does \ i.e. escaped escape
 foo$ argcv "starting a quoted thing
